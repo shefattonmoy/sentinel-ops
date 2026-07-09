@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: sentinelops-api
+    env: python
+    rootDir: backend
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+      python manage.py migrate
+    startCommand: daphne sentinelops.asgi:application --port $PORT --bind 0.0.0.0
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "*.onrender.com"
+      - key: CORS_ALLOWED_ORIGINS
+        value: "https://sentinelops.vercel.app"

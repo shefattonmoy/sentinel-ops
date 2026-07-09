@@ -1,0 +1,2 @@
+[console_scripts]
+sentinel-agent = sentinel_agent.run:main

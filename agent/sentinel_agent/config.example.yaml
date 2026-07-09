@@ -1,0 +1,29 @@
+# agent/config.example.yaml
+server_url: "http://localhost:8000/api"
+agent_name: "production-web-01"
+hostname: "web-prod-01"
+
+log_paths:
+  - /var/log/auth.log
+  - /var/log/syslog
+  - /var/log/nginx/access.log
+  - /var/log/nginx/error.log
+
+custom_log_paths:
+  - /var/log/myapp/app.log
+
+django_log_paths:
+  - /var/log/django/error.log
+
+monitor_docker: true
+
+heartbeat_interval: 30
+log_batch_size: 100
+max_buffer_size: 10000
+
+max_retries: 5
+retry_delay: 5
+retry_backoff: 2.0
+
+collect_metrics: true
+metrics_interval: 60
