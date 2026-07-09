@@ -17,7 +17,7 @@ def get_env(key, default=None):
 
 SECRET_KEY = get_env("SECRET_KEY", "uWA9fBPF1pQNb-yA243poZIhlpgbhFN1uAH8qKme3YikfZDgj2FVunMuo_gqVYIT6io")
 DEBUG = get_env("DEBUG", "True") == "True"
-ALLOWED_HOSTS = get_env("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+ALLOWED_HOSTS = get_env("ALLOWED_HOSTS", "*").split(",")
 
 # Application definition
 DJANGO_APPS = [
