@@ -127,15 +127,27 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-# ============ CORS & CSRF ============
-CORS_ALLOWED_ORIGINS = get_env("CORS_ALLOWED_ORIGINS", "http://localhost:3000").split(",")
-if DEBUG:
-    CORS_ALLOW_ALL_ORIGINS = True
 
-CSRF_TRUSTED_ORIGINS = get_env("CSRF_TRUSTED_ORIGINS", "http://localhost:3000").split(",")
+# ============ CORS & CSRF ============
+_cors_origins = get_env("CORS_ALLOWED_ORIGINS", "http://localhost:3000")
+if _cors_origins == "*":
+    CORS_ALLOW_ALL_ORIGINS = True
+    CORS_ALLOWED_ORIGINS = []
+else:
+    CORS_ALLOWED_ORIGINS = [o.strip() for o in _cors_origins.split(",") if o.strip()]
+
+_csrf_origins = get_env("CSRF_TRUSTED_ORIGINS", "http://localhost:3000")
+if _csrf_origins == "*":
+    CSRF_TRUSTED_ORIGINS = []
+else:
+    CSRF_TRUSTED_ORIGINS = [o.strip() for o in _csrf_origins.split(",") if o.strip()]
+
+
 
 # ============ USER MODEL ============
 AUTH_USER_MODEL = "accounts.User"
+
+
 
 # ============ STATIC ============
 STATIC_URL = "static/"
@@ -143,6 +155,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = "media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+
 
 # ============ TEMPLATES ============
 TEMPLATES = [
@@ -167,6 +181,8 @@ USE_I18N = True
 USE_TZ = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+
+
 # ============ LOGGING ============
 LOGGING = {
     "version": 1,
@@ -175,11 +191,15 @@ LOGGING = {
     "root": {"handlers": ["console"], "level": "INFO"},
 }
 
+
+
 # ============ PASSWORD ============
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", "OPTIONS": {"min_length": 8}},
 ]
+
+
 
 # ============ EMAIL ============
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend" if DEBUG else "django.core.mail.backends.smtp.EmailBackend"
