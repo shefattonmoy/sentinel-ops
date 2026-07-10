@@ -1,10 +1,69 @@
-from django.contrib import admin
+from django.http import JsonResponse
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib import admin
+from django.utils import timezone
+
+def home(request):
+    """Root endpoint showing deployment status"""
+    return JsonResponse({
+        "status": "✅ SentinelOps is running!",
+        "version": "1.0.0",
+        "deployed": True,
+        "endpoints": {
+            "api": "/api/",
+            "admin": "/admin/",
+            "health": "/health/",
+            "docs": "/api/docs/" if 'drf_yasg' in settings.INSTALLED_APPS else None,
+        },
+        "modules": {
+            "auth": "/api/auth/login/",
+            "dashboard": "/api/dashboard/overview/",
+            "events": "/api/events/",
+            "alerts": "/api/alerts/",
+            "agents": "/api/agents/manage/",
+            "incidents": "/api/incidents/",
+            "rules": "/api/rules/",
+            "reports": "/api/reports/list/",
+            "search": "/api/search/",
+            "threat_intel": "/api/threat-intel/top-threats/",
+            "playbooks": "/api/playbooks/",
+            "mitre": "/api/mitre/techniques/",
+            "forensics": "/api/forensics/timeline/",
+            "topology": "/api/topology/map/",
+            "compliance": "/api/compliance/frameworks/",
+            "analytics": "/api/analytics/users/",
+            "gamification": "/api/gamification/leaderboard/",
+            "chat": "/api/chat/send/",
+        },
+        "timestamp": timezone.now().isoformat() if 'django.utils' in str(settings.INSTALLED_APPS) else None,
+    })
+
+def health_check(request):
+    """Health check endpoint for monitoring"""
+    from django.db import connections
+    try:
+        connections['default'].cursor()
+        db_status = "connected"
+    except:
+        db_status = "disconnected"
+    
+    return JsonResponse({
+        "status": "healthy",
+        "database": db_status,
+        "timestamp": timezone.now().isoformat() if 'django.utils' in str(settings.INSTALLED_APPS) else None,
+    })
 
 urlpatterns = [
+    # Root - Deployment verification
+    path('', home, name='home'),
+    path('health/', health_check, name='health'),
+    
+    # Admin
     path('admin/', admin.site.urls),
+    
+    # API endpoints
     path('api/auth/', include('apps.accounts.urls')),
     path('api/agents/', include('apps.agents.urls')),
     path('api/logs/', include('apps.logs.urls')),
